@@ -3,6 +3,9 @@ extends CharacterBody2D
 var speed: int = 75
 var direction: Vector2 = Vector2.DOWN
 @onready var player: Sprite2D = $Player
+@onready var BULLET = preload("res://scenes/player/bullet.tscn")
+@onready var bullets: Node = $bullets
+@onready var spawn_point: Marker2D = $SpawnPoint
 
 func _physics_process(delta: float) -> void:
 	var input_dir: Vector2 = Vector2(
@@ -26,3 +29,11 @@ func _physics_process(delta: float) -> void:
 		player.flip_h = false
 	velocity = input_dir*speed
 	move_and_slide()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if Input.is_action_just_pressed("shoot"):
+		spawn_point.position = direction*10
+		var bullet_temp  = BULLET.instantiate()
+		bullet_temp.velocity = direction*100
+		bullet_temp.global_position = spawn_point.global_position
+		bullets.add_child(bullet_temp)
